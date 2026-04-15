@@ -12,13 +12,13 @@ class Expenses {
         return this.expenses.find(e => e.id === id);
     }
 
-    create(title, amount, date, category, description) {
+    create(title, amount, category, date, description) {
         const newExpense = {
             id: this.idCounter++,
             title,
             amount,
-            date,
             category,
+            date,
             description,
             createAt:Date.now()
         }
@@ -27,7 +27,7 @@ class Expenses {
         return newExpense;
     }
 
-    update(id, title, amount, date, category, description) {
+    update(id, title, amount, category, date, description) {
         const index = this.expenses.findIndex(e => e.id === id);
 
         if (index === -1) {
@@ -38,8 +38,8 @@ class Expenses {
             id: this.expenses[index].id,
             title,
             amount,
-            date,
             category,
+            date,
             description,
             createAt: this.expenses[index].createAt
         }
@@ -60,11 +60,10 @@ class Expenses {
     }
 
     summaryTotal() {
-        console.log("Teste")
         let totalAmount = 0;
         for (let index=0; index<this.expenses.length; index++) {
             totalAmount += this.expenses[index].amount;
-        } console.log("teste1")
+        }
         return totalAmount;
     } 
 }
