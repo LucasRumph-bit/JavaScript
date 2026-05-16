@@ -1,6 +1,9 @@
-const Expenses = require('../models/expense')
+const { getAllUsers, getUserById, createUser, updateUser, deleteUser, somaTotalDespesas } = require('../models/expense')
+
 class User {
- 
+    constructor() {
+
+    }
     create(req,res) {
     
         const {title, amount, category, date, description} = req.body

@@ -1,4 +1,5 @@
 const Usermodel = require("../controller/controller")
+
 class User {
 
     getAll(req, res) {
