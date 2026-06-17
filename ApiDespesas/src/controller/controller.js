@@ -1,4 +1,6 @@
-const { getAllUsers, getUserById, createUser, updateUser, deleteUser, somaTotalDespesas } = require('../models/expense')
+const Model = require('../models/expense')
+const jwt = require('jsonwebtoken')
+const authCofing = require('../config/auth')
 
 class User {
     constructor() {

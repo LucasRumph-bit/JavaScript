@@ -108,50 +108,61 @@ const Express = sequelize.define('expenses', {
     }
 })
 
-async function getAllUsers() {
-    return await Express.findAll();
-}
 
-async function createUser(title, amount, category, date, description) {
-    return await Express.create({title, amount, category, date, description});
-}
+class ExpressModel {
+    
+    constructor() {}
 
-async function getUserById(id) {
-    return await Express.findByPk(id);
-}
-
-async function updateUser(id, title, amount, category, date, description) {
-    const express = await getUserById(id);
-
-    if (!express) {
-        return null
+    async getAllUsers() {
+        return await Express.findAll();
     }
 
-    express.title = title;
-    express.amount = amount;
-    express.category = category;
-    express.date = date;
-    express.description = description;
-
-    await express.save()
-    return express;
-
-}
-
-async function deleteUser(id) {
-    const express = await getUserById(id);
-
-    if (!express) {
-        return null
+    async createUser(title, amount, category, date, description) {
+        return await Express.create({title, amount, category, date, description});
     }
 
-    await express.destroy();
-    return null;
+    async getUserById(id) {
+        return await Express.findByPk(id);
+    }
+
+    async updateUser(id, title, amount, category, date, description) {
+        const express = await getUserById(id);
+
+        if (!express) {
+            return null
+        }
+
+        express.title = title;
+        express.amount = amount;
+        express.category = category;
+        express.date = date;
+        express.description = description;
+
+        await express.save()
+        return express;
+
+    }
+
+    async deleteUser(id) {
+        const express = await getUserById(id);
+
+        if (!express) {
+            return null
+        }
+
+        await express.destroy();
+        return null;
+    }
+
+    async somaTotalDespesas() {
+        const total = await Express.sum('amount');
+
+        return total;
 }
 
-async function somaTotalDespesas() {
-    const total = await Express.sum('amount');
-
-    return total;
 }
-module.exports = {getAllUsers, createUser, getUserById, updateUser, deleteUser, somaTotalDespesas}, Express;
+
+const expressModel = new ExpressModel();
+expressModel.Express = Express;
+
+module.exports = expressModel;
