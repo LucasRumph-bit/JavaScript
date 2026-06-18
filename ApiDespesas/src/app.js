@@ -1,6 +1,7 @@
 const express = require('express');
 const { sequelize } = require('./models/db');
 require('./models/categoria')
+const router = require('./router/user.js')
 
 const Expenses = require('./view/view')
 const Categoria = require('./view/categoria')
@@ -12,23 +13,14 @@ app.use(express.json());
 console.log('Carregando middlewares e rotas...')
 
 app.post('./users/title', Expenses.title)
-app.post('./users', Expenses.create);
 
-app.get('/expenses/:id', authMiddleware, Expenses.getById)
-app.get('/expenses', authMiddleware, Expenses.getAll)
-app.put('/expenses/:id', authMiddleware, Expenses.update)
-app.delete('./expenses/:id', authMiddleware, Expenses.delete)
+app.use(router)
 
 app.use(authMiddleware);
 
 //categoria adicionar pra frente
 
-app.get('/categoria', Categoria.getAll)
-app.get('/categoria/:id', Categoria.getById)
-app.post('/categoria', Categoria.create)
-app.put('./categoria/:id', Categoria.update)
-app.delete('./categoria/:id', Categoria.delete)
-app.get('./expenses/:expensesId/categoria', Categoria.getByUserId)
+app.use(router);
 
 //
 

@@ -17,14 +17,14 @@ module.exports = function authMiddleware(req,res,next){
     try {
         const decoded = jwt.verify(token, authCofing.jwt.secret);
         req.express = {
-            tiltle: decoded.tiltle,
+            title: decoded.title,
             category: decoded.category
         }
 
         const method = req.method;
         const path = req.path;
 
-        console.log(` Middleware de autenticação: ${method} ${path} - Titulo: ${req.express.tiltle} (Categoria: ${req.express.category})`);
+        console.log(` Middleware de autenticação: ${method} ${path} - Titulo: ${req.express.title} (Categoria: ${req.express.category})`);
         if (path.startsWith('/expenses') && req.express.category !== 'admin') {
             return res.status(403).json({ error: 'Acesso negado: apenas administradores podem acessar esta rota' });
         }
