@@ -39,7 +39,7 @@ class UserModel {
     }
 
     async getUserById(id) {
-        return await User.findByPk(id, { include: [{ association: 'categoria' }] }); os
+        return await User.findByPk(id, { include: [{ association: 'categoria' }] }); 
     }
 
     async updateUser(id, email, password, name) {

@@ -1,9 +1,25 @@
-const expressModel = require('./expense')
-const CategoriaModel = require('./categoria')
+const userModel = require('./usuario');
+const categoriaModel = require('./categoria');
+const expressModel = require('./expense');
 
-const Expenses = expressModel.Expenses;
-const Categoria = CategoriaModel.Categoria;
+const User = userModel.User;
+const Categoria = categoriaModel.Categoria;
+const Express = expressModel.Express;
 
-Expenses.hasmany(Categoria, {
-    foreingKey: 'id'
-})
+User.hasMany(Categoria, {
+    foreignKey: 'userId',
+    as: 'categorias'
+});
+Categoria.belongsTo(User, {
+    foreignKey: 'userId'
+});
+
+Categoria.hasMany(Express, {
+    foreignKey: 'categoriaId',
+    as: 'despesas'
+});
+Express.belongsTo(Categoria, {
+    foreignKey: 'categoriaId'
+});
+
+module.exports = {};

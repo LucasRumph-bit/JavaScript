@@ -12,11 +12,11 @@ app.use(express.json());
 
 console.log('Carregando middlewares e rotas...')
 
-app.post('./users/title', Expenses.title)
-
-app.use(router)
+app.post('/users/title', Expenses.title)
 
 app.use(authMiddleware);
+
+app.use(router)
 
 //categoria adicionar pra frente
 
@@ -24,7 +24,7 @@ app.use(router);
 
 //
 
-app.user((err, req, res, next) => {
+app.use((err, req, res, next) => {
     console.error('Erro não tratado na aplicação:', err)
     res.status(500).json({ error: 'Erro interno do servidor' });
 })
