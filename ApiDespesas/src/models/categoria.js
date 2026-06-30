@@ -7,6 +7,16 @@ const Categoria = sequelize.define('categoria', {
         autoIncrement: true,
         primaryKey: true
     },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            models: 'usuario',
+            key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    },
     title: {
         type: DataTypes.STRING,
         allowNull: false
@@ -27,9 +37,13 @@ class CategoriaModel {
     async getCategoriaById(id) {
         return await Categoria.findByPk(id);
     }
+    
+    async getCategoriaByUsuarioId(userid) {
+        return await Categoria.findAll({ where: { userId }});
+    }
 
-    async createCategoria(id, title, description) {
-        return await Categoria.create({ id, title, description });
+    async createCategoria(userId, title, description) {
+        return await Categoria.create({ userId, title, description });
     }
 
     async updateCategoria(id, title, description) {
