@@ -8,8 +8,9 @@ const Express = expressModel.Express;
 
 User.hasMany(Categoria, {
     foreignKey: 'userId',
-    as: 'categorias'
+    as: 'categoria'
 });
+
 Categoria.belongsTo(User, {
     foreignKey: 'userId'
 });

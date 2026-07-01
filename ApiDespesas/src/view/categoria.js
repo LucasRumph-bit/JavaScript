@@ -1,4 +1,4 @@
-const CategoriaController = require('..controller/categoria')
+const CategoriaController = require('../controller/categoria')
 
 class Categoria {
     constructor() {}

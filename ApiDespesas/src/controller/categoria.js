@@ -1,47 +1,99 @@
-const Usermodel = require('../models/usuario')
-const CategoriaModel = require('../models/categoria');
-const { getById } = require('./controller');
+const categoriaModel = require('./categoria');
 
-class Categoria {
+class CategoriaView {
     constructor() {}
 
-    async getAll() {
-        return await CategoriaModel.getAllCategoria();
-    }
-
-    async getById(id) {
-        return await CategoriaModel.getCategoriaById();
-    }
-
-    async getByUsuarioId(userId) {
-        return await CategoriaModel.getCategoriaByUsuarioId(userId);
-    }
-
-    async create(userId, title, description) {
-        const user = await Usermodel.getByUsuarioId(userId)
-
-        if (!user) {
-            throw new Error('Usuário não encontrado');
+    async getAll(req, res) {
+        try {
+            const categorias = await categoriaModel.getCategoriaByUsuarioId(req.user.id);
+            res.json(categorias);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: error.message });
         }
-
-        if(!title || !description) {
-            throw new Error('Todos os campos são obrigatorios')
-        }
-
-        return await CategoriaModel.createCategoria(userId, title, description)
     }
 
-    async update(id, title, description) {
-        if(!title || !description)  {
-            throw new Error('Todos os campos são obrigatorios')
-        }
+    async getById(req, res) {
+        try {
+            const id = Number(req.params.id);
+            const categoria = await categoriaModel.getCategoriaById(id);
 
-        return await CategoriaModel.updateCategoria(id, title, description)
+            if (!categoria) {
+                return res.status(404).json({ error: 'Categoria não encontrada' });
+            }
+
+            if (categoria.userId !== req.user.id) {
+                return res.status(403).json({ error: 'Acesso negado' });
+            }
+
+            res.json(categoria);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: error.message });
+        }
     }
 
-    async delete(id){
-        return await CategoriaModel.deleteCategoria(id)
+    async create(req, res) {
+        try {
+            const { title, description } = req.body || {};
+
+            if (!title) {
+                return res.status(400).json({ error: 'O campo title é obrigatório' });
+            }
+
+            const newCategoria = await categoriaModel.createCategoria(req.user.id, title, description);
+            res.status(201).json(newCategoria);
+        } catch (error) {
+            console.error(error);
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    async update(req, res) {
+        try {
+            const id = Number(req.params.id);
+            const { title, description } = req.body || {};
+
+            const categoria = await categoriaModel.getCategoriaById(id);
+
+            if (!categoria) {
+                return res.status(404).json({ error: 'Categoria não encontrada' });
+            }
+
+            if (categoria.userId !== req.user.id) {
+                return res.status(403).json({ error: 'Acesso negado' });
+            }
+
+            const updateCategoria = await categoriaModel.updateCategoria(id, title, description);
+            res.json(updateCategoria);
+        } catch (error) {
+            console.error(error);
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    async delete(req, res) {
+        try {
+            const id = Number(req.params.id);
+
+            const categoria = await categoriaModel.getCategoriaById(id);
+
+            if (!categoria) {
+                return res.status(404).json({ error: 'Categoria não encontrada' });
+            }
+
+            if (categoria.userId !== req.user.id) {
+                return res.status(403).json({ error: 'Acesso negado' });
+            }
+
+            await categoriaModel.deleteCategoria(id);
+
+            res.status(204).send();
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: error.message });
+        }
     }
 }
 
-module.exports = new Categoria();
+module.exports = new CategoriaView();

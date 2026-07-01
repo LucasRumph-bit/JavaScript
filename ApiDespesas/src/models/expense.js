@@ -1,4 +1,3 @@
-const { summaryTotal } = require('../controller/controller');
 const { sequelize } = require('./db');
 const { DataTypes } = require('sequelize');
 
@@ -8,16 +7,22 @@ const Express = sequelize.define('expenses', {
         autoIncrement: true,
         primaryKey: true
     },
+    categoriaId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'categoria',
+            key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    },
     title: {
         type: DataTypes.STRING,
         allowNull: false
     },
     amount: {
-        type : DataTypes.FLOAT,
-        allowNull: false
-    },
-    category: {
-        type: DataTypes.STRING,
+        type: DataTypes.FLOAT,
         allowNull: false
     },
     date: {
@@ -27,36 +32,28 @@ const Express = sequelize.define('expenses', {
     description: {
         type: DataTypes.STRING,
         allowNull: true
-    }, 
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    summaryTotal: {
-        type: DataTypes.FLOAT,
-        allowNull: true
     }
 })
 
 
 class ExpressModel {
-    
+
     constructor() {}
 
     async getAllUsers() {
         return await Express.findAll();
     }
 
-    async createUser(title, amount, category, date, description) {
-        return await Express.create({title, amount, category, date, description});
+    async createUser(categoriaId, title, amount, date, description) {
+        return await Express.create({ categoriaId, title, amount, date, description });
     }
 
     async getUserById(id) {
         return await Express.findByPk(id);
     }
 
-    async updateUser(id, title, amount, category, date, description) {
-        const express = await getUserById(id);
+    async updateUser(id, title, amount, date, description) {
+        const express = await this.getUserById(id);
 
         if (!express) {
             return null
@@ -64,7 +61,6 @@ class ExpressModel {
 
         express.title = title;
         express.amount = amount;
-        express.category = category;
         express.date = date;
         express.description = description;
 
@@ -74,7 +70,7 @@ class ExpressModel {
     }
 
     async deleteUser(id) {
-        const express = await getUserById(id);
+        const express = await this.getUserById(id);
 
         if (!express) {
             return null
@@ -88,7 +84,7 @@ class ExpressModel {
         const total = await Express.sum('amount');
 
         return total;
-}
+    }
 
 }
 

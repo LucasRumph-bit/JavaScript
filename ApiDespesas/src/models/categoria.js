@@ -1,5 +1,5 @@
-const { sequelize } = require('./db')
-const { DataTypes } = require('sequelize')
+const { sequelize } = require('./db');
+const { DataTypes } = require('sequelize');
 
 const Categoria = sequelize.define('categoria', {
     id: {
@@ -11,7 +11,7 @@ const Categoria = sequelize.define('categoria', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            models: 'usuario',
+            model: 'users',
             key: 'id'
         },
         onDelete: 'CASCADE',
@@ -25,9 +25,10 @@ const Categoria = sequelize.define('categoria', {
         type: DataTypes.STRING,
         allowNull: true
     }
-})
+});
 
 class CategoriaModel {
+
     constructor() {}
 
     async getAllCategoria() {
@@ -37,9 +38,9 @@ class CategoriaModel {
     async getCategoriaById(id) {
         return await Categoria.findByPk(id);
     }
-    
-    async getCategoriaByUsuarioId(userid) {
-        return await Categoria.findAll({ where: { userId }});
+
+    async getCategoriaByUsuarioId(userId) {
+        return await Categoria.findAll({ where: { userId } });
     }
 
     async createCategoria(userId, title, description) {
@@ -49,31 +50,30 @@ class CategoriaModel {
     async updateCategoria(id, title, description) {
         const categoria = await this.getCategoriaById(id);
 
-        if(!categoria) {
-            return null
+        if (!categoria) {
+            return null;
         }
 
-        categoria.id = id;
-        categoria.title = title
-        categoria.description = description
+        categoria.title = title;
+        categoria.description = description;
 
-        await categoria.save()
-        return categoria
+        await categoria.save();
+        return categoria;
     }
 
     async deleteCategoria(id) {
-        const categoria = await this.getCategoriaById(id)
+        const categoria = await this.getCategoriaById(id);
 
         if (!categoria) {
-            return false
+            return null;
         }
 
-        await categoria.destroy()
-            return true
+        await categoria.destroy();
+        return null;
     }
 }
 
 const categoriaModel = new CategoriaModel();
-CategoriaModel.Categoria = Categoria;
+categoriaModel.Categoria = Categoria;
 
 module.exports = categoriaModel;

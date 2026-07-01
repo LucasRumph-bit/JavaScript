@@ -1,48 +1,106 @@
-const Usermodel = require("../controller/controller")
+const expressModel = require('../models/expense');
 
-class User {
+class ExpensesView {
 
-    getAll(req, res) {
-        const getAll = Usermodel.getAll();
-        return res.json(getAll)
+    async getAll(req, res) {
+        try {
+            const expenses = await expressModel.getAllUsers();
+            return res.status(200).json(expenses);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: error.message });
+        }
     }
 
-    getById(req,res) {
-        const id = req.params.id;
-        const getById = Usermodel.getById(id);
-        return res.json(getById)
+    async getById(req, res) {
+        try {
+            const id = Number(req.params.id);
+            const expense = await expressModel.getUserById(id);
+
+            if (!expense) {
+                return res.status(404).json({ error: 'Despesa não encontrada' });
+            }
+
+            return res.status(200).json(expense);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: error.message });
+        }
     }
 
-    create(req,res) {
-        const {title, amount, category, date, description} = req.body
-        const create = Usermodel.create(title, amount, category, date, description);
-        return res,json(create)
+    async create(req, res) {
+        try {
+            const { categoriaId, title, amount, date, description } = req.body || {};
+
+            if (!title) {
+                return res.status(400).json({ error: 'O campo title é obrigatório' });
+            }
+            if (!categoriaId) {
+                return res.status(400).json({ error: 'O campo categoriaId é obrigatório' });
+            }
+            if (!amount || amount <= 0) {
+                return res.status(400).json({ error: 'O campo amount deve ser maior que 0' });
+            }
+            if (date && new Date(date).getTime() > Date.now()) {
+                return res.status(400).json({ error: 'O campo date não pode ser no futuro' });
+            }
+
+            const expense = await expressModel.createUser(categoriaId, title, amount, date, description);
+            return res.status(201).json(expense);
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ error: error.message });
+        }
     }
 
-    update(req,res) {
-        const {id, title, amount, category, date, description} = req.body
-        const update = Usermodel.update(id, title, amount, category, date, description);
-        return res.json(update)
+    async update(req, res) {
+        try {
+            const id = Number(req.params.id);
+            const { title, amount, date, description } = req.body || {};
+
+            if (!title) {
+                return res.status(400).json({ error: 'O campo title é obrigatório' });
+            }
+            if (!amount || amount <= 0) {
+                return res.status(400).json({ error: 'O campo amount deve ser maior que 0' });
+            }
+            if (date && new Date(date).getTime() > Date.now()) {
+                return res.status(400).json({ error: 'O campo date não pode ser no futuro' });
+            }
+
+            const expense = await expressModel.updateUser(id, title, amount, date, description);
+
+            if (!expense) {
+                return res.status(404).json({ error: 'Despesa não encontrada' });
+            }
+
+            return res.status(200).json(expense);
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ error: error.message });
+        }
     }
 
-    delete(req,res) {
-        const id = req.params.id;
-        const deletar = Usermodel.delete(id)
-        return res.json(deletar)
+    async delete(req, res) {
+        try {
+            const id = Number(req.params.id);
+            await expressModel.deleteUser(id);
+            return res.status(204).send();
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: error.message });
+        }
     }
 
-    summaryTotal(req,res) {
-        const expenses = Usermodel.getAll();
-
-        let totalAmount = 0;
-        
-        for (let index=0; index<expenses.length; index++) {
-            totalAmount += expenses[index].amount;
-        } 
-        
-        return res.json({ total: totalAmount });
-    } 
+    async summaryTotal(req, res) {
+        try {
+            const total = await expressModel.somaTotalDespesas();
+            return res.status(200).json({ total: total || 0 });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: error.message });
+        }
+    }
 }
 
-
-module.exports = new User();
+module.exports = new ExpensesView();

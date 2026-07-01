@@ -23,23 +23,23 @@ const User = sequelize.define('users', {
 })
 
 class UserModel {
-    
+
     constructor() {}
 
     async getAllUsers() {
-        return await User.findAll({ include: [{ association: 'categoria' }] }); 
+        return await User.findAll({ include: [{ association: 'categorias' }] });
     }
 
     async createUser(email, password, name) {
-        return await User.create({ email, password, name }); 
+        return await User.create({ email, password, name });
     }
 
     async getUserByEmail(email) {
-        return await User.findOne({ where: { email }, include: [{ association: 'categoria' }] });
+        return await User.findOne({ where: { email }, include: [{ association: 'categorias' }] });
     }
 
     async getUserById(id) {
-        return await User.findByPk(id, { include: [{ association: 'categoria' }] }); 
+        return await User.findByPk(id, { include: [{ association: 'categorias' }] });
     }
 
     async updateUser(id, email, password, name) {
