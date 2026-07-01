@@ -6,7 +6,6 @@ const Expenses = require('../view/view');
 const Categoria = require('../view/categoria')
 const Usuario = require('../view/usuario')
 
-// rotas públicas — não passam por authMiddleware, pois é aqui que o token é obtido
 router.post('/register', Usuario.register);
 router.post('/login', Usuario.login);
 
